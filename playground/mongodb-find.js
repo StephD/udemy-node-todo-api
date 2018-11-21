@@ -15,7 +15,8 @@ var { name } = user // Destructuring
 // console.log(obj)
 
 MongoClient.connect(
-	'mongodb://localhost:27017' + '/TodoApp',
+	'mongodb://localhost:27017',
+	{ useNewUrlParser: true },
 	(err, client) => {
 		if (err) return console.log('Unable to connect to the DB server')
 		console.log('Connected to MongoDB server')
@@ -25,40 +26,27 @@ MongoClient.connect(
 			.find()
 			.count()
 			.then(
-				count => {
-					console.log(`There is ${count} todo`)
-				},
-				err => {
-					console.log('Unable to fetch')
-				},
+				count => console.log(`There is ${count} todos in`),
+				err => console.log('Unable to fetch'),
 			)
 
 		db.collection('Users')
 			.find({ name: 'Steph' })
 			.toArray()
 			.then(
-				docs => {
-					console.log(JSON.stringify(docs, undefined, 2))
-				},
-				err => {
-					console.log('Unable to fetch')
-				},
+				docs => console.log(JSON.stringify(docs, undefined, 2)),
+				err => console.log('Unable to fetch'),
 			)
 
-		// db.collection('Todos')
-		// 	// .find()
-		// 	// .find({ completed: true }) // "where"
-		// 	.find({ _id: new ObjectID('5bf3b024f49586612c665cb5') }) // "where"
-		// 	.toArray()
-		// 	.then(
-		// 		res => {
-		// 			console.log('Todos')
-		// 			console.log(JSON.stringify(res, undefined, 2))
-		// 		},
-		// 		err => {
-		// 			console.log('Unable to fetch')
-		// 		},
-		// 	)
+		db.collection('Todos')
+			// .find()
+			// .find({ completed: true }) // "where"
+			.find({ _id: new ObjectID('5bf3b024f49586612c665cb5') }) // "where"
+			.toArray()
+			.then(
+				res => console.log('Todos', JSON.stringify(res, undefined, 2)),
+				err => console.log('Unable to fetch'),
+			)
 
 		client.close()
 	},

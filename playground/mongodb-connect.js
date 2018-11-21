@@ -1,4 +1,3 @@
-// const MongoClient = require('mongodb').MongoClient
 const { MongoClient, ObjectID } = require('mongodb')
 const mongoUrl = 'mongodb://localhost:27017'
 
@@ -15,10 +14,10 @@ var { name } = user // Destructuring
 // console.log(obj)
 
 MongoClient.connect(
-	'mongodb://localhost:27017' + '/TodoApp',
+	'mongodb://localhost:27016',
+	{ useNewUrlParser: true },
 	(err, client) => {
 		if (err) return console.log('Unable to connect to the DB server')
-		console.log('Connected to MongoDB server')
 
 		const db = client.db('TodoApp')
 
@@ -29,7 +28,7 @@ MongoClient.connect(
 			},
 			(err, res) => {
 				if (err) return console.log('Unable to insert a value')
-				console.log(JSON.stringify(res.ops), undefined, 2)
+				console.log(res.ops[0])
 			},
 		)
 
