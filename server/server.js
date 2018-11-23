@@ -46,7 +46,7 @@ app.get('/todos/:id', (req, res) => {
 		.catch(e => res.status(400).send('Something wrong : ' + e))
 })
 
-app.listen(port, () => console.log(`Started on port ${port}`))
+app.listen(port, () => console.log(`heroku logs --tailStarted on port ${port}`))
 
 module.exports = {
 	app,
