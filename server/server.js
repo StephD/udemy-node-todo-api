@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bp = require('body-parser')
 
+const { ObjectID } = require('mongodb')
 const { mongoose } = require('./db/mongoose')
 const { Todo } = require('./models/todo')
 const { User } = require('./models/user')
@@ -25,6 +26,22 @@ app.post('/users', (req, res) => {
 
 app.get('/todos', (req, res) => {
 	Todo.find().then(todos => res.send({ todos }), e => res.status(400).send(e))
+})
+
+app.get('/todos/:id', (req, res) => {
+	let id = req.params.id
+
+	if (!ObjectID.isValid(id)) return res.status(400).send("Id isn't a correct number")
+
+	Todo.findById(id)
+		.then(
+			ret => {
+				if (!ret) res.status(400).send('Todo not find')
+				res.send(ret)
+			},
+			e => res.status(400).send('Something wrong : ' + e),
+		)
+		.catch(e => res.status(400).send('Something wrong : ' + e))
 })
 
 app.listen(3000, () => console.log('Started on port 3000'))

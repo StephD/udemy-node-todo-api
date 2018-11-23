@@ -6,8 +6,20 @@ const { app } = require('../server')
 const { Todo } = require('../models/todo')
 // const { User } = require('../models/user')
 
+const todos = [
+	{
+		text: 'first todo',
+	},
+	{ text: 'second todo' },
+]
+
 beforeEach(done => {
-	Todo.remove({}).then(() => done())
+	// Todo.remove({}).then(() => done())
+	Todo.remove({})
+		.then(() => {
+			return Todo.insertMany(todos)
+		})
+		.then(() => done())
 })
 
 describe('POST /todos', () => {
