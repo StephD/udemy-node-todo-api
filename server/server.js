@@ -1,13 +1,15 @@
 const express = require('express')
 const app = express()
 const bp = require('body-parser')
+const _ = require('lodash')
 
 const { ObjectID } = require('mongodb')
 const { mongoose } = require('./db/mongoose')
 const { Todo } = require('./models/todo')
 const { User } = require('./models/user')
 
-const port = process.env.PORT || 3000
+require('./config/config')
+const port = process.env.PORT
 
 app.use(bp.json())
 
@@ -21,9 +23,16 @@ app.post('/todos', (req, res) => {
 })
 
 app.post('/users', (req, res) => {
-	const user = new User({ email: req.body.email })
-	user.save().then(doc => res.send(doc), e => res.status(400).send(e))
-	// res.status(400).send('Sad')
+	const body = _.pick(req.body, ['email', 'password'])
+	const user = new User(body)
+
+	// User.findByToken(user)
+
+	user
+		.save()
+		.then(() => user.generateAuthToken())
+		.then(token => res.header('x-auth', token).send(user))
+		.catch(e => res.status(400).send(e))
 })
 
 app.get('/todos', (req, res) => {
@@ -46,7 +55,7 @@ app.get('/todos/:id', (req, res) => {
 		.catch(e => res.status(400).send('Something wrong : ' + e))
 })
 
-app.listen(port, () => console.log(`heroku logs --tailStarted on port ${port}`))
+app.listen(port, () => console.log(`Started on port ${port}`))
 
 module.exports = {
 	app,
