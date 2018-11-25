@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
 		required: true,
 		minlength: 1,
 		trim: true,
-		// unique: true,
+		unique: true,
 		validate: {
 			validator: value => validator.isEmail(value),
 			message: '{VALUE} is not a valid email',
@@ -40,9 +40,24 @@ UserSchema.methods.toJSON = function() {
 	return _.pick(userObject, ['_id', 'email'])
 }
 
+UserSchema.statics.findByToken = function(token) {
+	const User = this
+	var decoded
+	try {
+		decoded = jwt.verify(token, 'abc123')
+	} catch (e) {
+		return Promise.reject(e)
+	}
+
+	const user = User.findOne({
+		_id: decoded._id,
+		'tokens.token': token,
+		'tokens.access': 'auth',
+	})
+
+	return user
+}
+
 const User = mongoose.model('User', UserSchema, 'Users')
 
-const findByToken = User => {}
-const generateAuthToken = () => {}
-
-module.exports = { User, findByToken }
+module.exports = { User }
