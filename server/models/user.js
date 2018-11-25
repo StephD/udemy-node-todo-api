@@ -34,6 +34,18 @@ UserSchema.methods.generateAuthToken = function() {
 	return user.save().then(() => token)
 }
 
+UserSchema.methods.removeToken = function(token) {
+	const user = this
+
+	return user.update({
+		$pull: {
+			tokens: {
+				token: token,
+			},
+		},
+	})
+}
+
 UserSchema.methods.toJSON = function() {
 	let user = this
 	const userObject = user.toObject()
