@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const _ = require('lodash')
 
 const UserSchema = new mongoose.Schema({
@@ -57,6 +58,15 @@ UserSchema.statics.findByToken = function(token) {
 
 	return user
 }
+
+// Make modif before save
+UserSchema.pre('save', function(next) {
+	let user = this
+
+	if (user.isModified('password')) user.password = bcrypt.hashSync(user.password, 8)
+
+	next()
+})
 
 const User = mongoose.model('User', UserSchema, 'Users')
 
