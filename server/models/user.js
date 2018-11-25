@@ -59,6 +59,21 @@ UserSchema.statics.findByToken = function(token) {
 	return user
 }
 
+UserSchema.statics.findByCredentials = function(email, password) {
+	const User = this
+
+	// find user by mail
+	return User.findOne({ email }).then(user => {
+		if (!user) return Promise.reject('No user has been found with this email')
+
+		return new Promise((resolve, reject) => {
+			if (bcrypt.compareSync(password.toString(), user.password)) {
+				resolve(user)
+			} else reject()
+		})
+	})
+}
+
 // Make modif before save
 UserSchema.pre('save', function(next) {
 	let user = this
